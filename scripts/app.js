@@ -31,8 +31,8 @@
         let Article = document.createElement("Article");
         let ArticleParagraph = `<p id="ArticleParagraph" class="mt-3"> This is my Article Paragraph</p>`;
 
-        ArticleParagraph.setAttribute("class", "container");
         Article.innerHTML = ArticleParagraph;
+        Article.setAttribute("class", "container");
         DocumentBody.appendChild(Article);
     }
 
