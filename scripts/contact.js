@@ -91,6 +91,34 @@ class Contact {
                 Contact: ${this._contactNumber}\n
                 Email: ${this._emailAddress}`;
     }
+
+    /**
+     * Serializes the contact details into a string format suitable for storage
+     * @returns {string|null}
+     */
+    serialize() {
+        if (!this._fullName || !this._contactNumber || !this._emailAddress) {
+            console.error("One or more of the contact properties are missing or invalid");
+            return null;
+        }
+        return `${this._fullName}, ${this._contactNumber}, ${this._emailAddress}`;
+    }
+
+    /**
+     * Deserializes a string (comma-delimited) of contact details and update properties
+     * @param data
+     */
+    deserialize(data) {
+        if (typeof data !== "string" || data.split(",").length !== 3) {
+            console.error("Invalid data format for deserializing data.");
+            return;
+        }
+
+        const propArray = data.split(",");
+        this._fullName = propArray[0];
+        this._contactNumber = propArray[1];
+        this._emailAddress = propArray[2];
+    }
 }
 
 /**
@@ -109,24 +137,32 @@ function displayContactPage() {
         const contactNumber = document.getElementById("contactNumber").value;
         const emailAddress = document.getElementById("emailAddress").value;
 
+        // Element for displaying validation messages
+        const validationMessage = document.getElementById("validationMessage");
+        validationMessage.style.display = "none"; // Hide by default
+
         // Validate phone number format (XXX-XXX-XXXX)
         const phoneNumberPattern = /^\d{3}-\d{3}-\d{4}$/;
         if (!phoneNumberPattern.test(contactNumber)) {
-            alert("Please enter a valid phone number in the format XXX-XXX-XXXX.");
+            validationMessage.textContent = "Please enter a valid phone number in the format XXX-XXX-XXXX.";
+            validationMessage.style.display = "block";
+            validationMessage.style.color = "red";
             return;
         }
 
         // Validate email address
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(emailAddress)) {
-            alert("Please enter a valid email address.");
+            validationMessage.textContent = "Please enter a valid email address.";
+            validationMessage.style.display = "block";
+            validationMessage.style.color = "red";
             return;
         }
 
         // Create Contact instance
         let contact = new Contact(fullName, contactNumber, emailAddress);
 
-        // Confirmation message (HTML element, previously used)
+        // Display the confirmation message
         const confirmationMessage = document.getElementById("confirmationMessage");
         confirmationMessage.textContent = "Contact information submitted successfully.";
         confirmationMessage.style.display = "block";
