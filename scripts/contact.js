@@ -11,7 +11,6 @@
  * Represents a Contact with a fullName, contactNumber, and emailAddress
  */
 class Contact {
-
     /**
      * Constructor a new Constructor instance
      * @param fullName
@@ -19,11 +18,10 @@ class Contact {
      * @param emailAddress
      */
     constructor(fullName = "", contactNumber = "", emailAddress = "") {
-     this._fullName = fullName;
-     this._contactNumber = contactNumber;
-     this._emailAddress = emailAddress;
+        this._fullName = fullName;
+        this._contactNumber = contactNumber;
+        this._emailAddress = emailAddress;
     }
-
 
     /**
      * Gets the full name of the contact
@@ -33,18 +31,16 @@ class Contact {
         return this._fullName;
     }
 
-
     /**
      * Sets the full name of the contact. Validates input to ensure it's a non-empty string.
      * @param fullName
      */
     set fullName(fullName) {
-        if(typeof fullName !== "string"|| fullName.trim() === "") {
+        if (typeof fullName !== "string" || fullName.trim() === "") {
             throw new Error("Invalid fullName: must be non-empty string");
         }
         this._fullName = fullName;
     }
-
 
     /**
      * Gets contact number of the contact
@@ -54,28 +50,25 @@ class Contact {
         return this._contactNumber;
     }
 
-
     /**
-     * sets the contactNumber of the contact. Validates the input to ensure it matches the 10-digit format
+     * Sets the contactNumber of the contact. Validates the input to ensure it matches the 10-digit format
      * @param contactNumber
      */
     set contactNumber(contactNumber) {
-        const phoneRegex = /^\d{3}-^\d{3}-\d{4}$/; //905-555-5555
-        if(!phoneRegex.test(contactNumber)) {
-            throw new Error("Invalid contact number: must be a 10-digit number");
+        const phoneRegex = /^\d{3}-\d{3}-\d{4}$/; // Example: 905-555-5555
+        if (!phoneRegex.test(contactNumber)) {
+            throw new Error("Invalid contact number: must be in the format XXX-XXX-XXXX");
         }
         this._contactNumber = contactNumber;
     }
 
-
     /**
-     * gets the email address for the contact
+     * Gets the email address for the contact
      * @returns {string}
      */
     get emailAddress() {
         return this._emailAddress;
     }
-
 
     /**
      * Sets the email address of the contact. Validate input to ensure standard email format
@@ -83,50 +76,64 @@ class Contact {
      */
     set emailAddress(address) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!emailRegex.test(address)) {
-            throw new Error("Invalid email address: must be non-empty string");
+        if (!emailRegex.test(address)) {
+            throw new Error("Invalid email address: must be a valid email format");
         }
-        this._emailAddress = emailRegex.test(address);
+        this._emailAddress = address;
     }
-
 
     /**
      * Converts the contact details into a human-readable string
      * @returns {string}
      */
-    toString(){
+    toString() {
         return `Full Name: ${this._fullName}\n
                 Contact: ${this._contactNumber}\n
                 Email: ${this._emailAddress}`;
     }
+}
 
+/**
+ * Function to handle contact form submissions
+ */
+function displayContactPage() {
+    const sendButton = document.getElementById("sendButton");
 
-    /**
-     * Serializes the contact details into a string format suitable for storage
-     * @returns {string|null}
-     */
-    serialize(){
-        if(!this._fullName || !this._contactNumber || !this._emailAddress){
-            console.error("One or more of the contact properties are missing or invalid");
-            return null;
-        }
-        return `${this._fullName}, ${this._contactNumber}, ${this._emailAddress}`;
-    }
+    // Add click event listener to the send button
+    sendButton.addEventListener("click", function (event) {
+        // Prevent default form submission
+        event.preventDefault();
 
+        // Validate form fields
+        const fullName = document.getElementById("fullName").value;
+        const contactNumber = document.getElementById("contactNumber").value;
+        const emailAddress = document.getElementById("emailAddress").value;
 
-    /**
-     * deserializes a string (comma-delimited) of contact details and update properties
-     * @param data
-     */
-    deserialize(data){
-        if(typeof data !== "string"||data.split(",").length !== 3){
-            console.error("Invalid data format for deserializing data.");
+        // Validate phone number format (XXX-XXX-XXXX)
+        const phoneNumberPattern = /^\d{3}-\d{3}-\d{4}$/;
+        if (!phoneNumberPattern.test(contactNumber)) {
+            alert("Please enter a valid phone number in the format XXX-XXX-XXXX.");
             return;
         }
 
-        const propArray = data.split(",");
-        this._fullName = propArray[0];
-        this._contactNumber = propArray[1];
-        this._emailAddress = propArray[2];
-    }
+        // Validate email address
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailAddress)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        // Create Contact instance
+        let contact = new Contact(fullName, contactNumber, emailAddress);
+
+        // Confirmation message (HTML element, previously used)
+        const confirmationMessage = document.getElementById("confirmationMessage");
+        confirmationMessage.textContent = "Contact information submitted successfully.";
+        confirmationMessage.style.display = "block";
+    });
 }
+
+/**
+ * Initialize the contact page
+ */
+window.addEventListener("DOMContentLoaded", displayContactPage);
